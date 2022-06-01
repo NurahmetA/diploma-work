@@ -1,0 +1,1 @@
+web: java -jar diploma-backend/target/diploma-backend-1.0.jar

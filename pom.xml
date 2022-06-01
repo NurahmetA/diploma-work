@@ -15,7 +15,7 @@
     </parent>
     <groupId>com.example</groupId>
     <artifactId>diploma-work</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0</version>
     <name>diploma-work</name>
     <description>diploma-work</description>
     <properties>
@@ -27,7 +27,7 @@
             <dependency>
                 <groupId>com.example</groupId>
                 <artifactId>diploma-api</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
+                <version>1.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
