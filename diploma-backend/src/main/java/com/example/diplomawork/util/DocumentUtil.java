@@ -13,7 +13,11 @@ import java.io.IOException;
 public class DocumentUtil {
 
     public static void generateFirstProtocolPdf(InfoForDocumentTemplateDto dto, Reviewer reviewer, String initial) throws IOException, DocumentException {
-        BaseFont newTimesRoman = BaseFont.createFont("diploma-backend/src/main/resources/fonts/timesnrcyrmt.ttf", "cp1251", BaseFont.EMBEDDED);
+        String pathtofont = "/fonts/kztimesnewroman.ttf";
+        String fontname = DocumentUtil.class.getResource(pathtofont).toString();
+        FontFactory.register(fontname);
+        BaseFont newTimesRoman = BaseFont.createFont(fontname,
+                "Cp1166", BaseFont.EMBEDDED);
         Font font = new Font(newTimesRoman, 12, Font.NORMAL);
         Font boldFont = new Font(newTimesRoman, 12, Font.BOLD);
 
@@ -36,8 +40,8 @@ public class DocumentUtil {
         Paragraph headCommission = new Paragraph("Председатель аттестационной комиссии:" + headInfo, font);
         Paragraph commissionList = new Paragraph("Члены аттестационной комиссии:", font);
         List commissionMembers = new List(List.ORDERED);
-        dto.getCommissions().stream().map(commission -> new ListItem(commission.getLastName() + " " + commission.getFirstName(), font)).filter(elements -> !elements.equals("Рахимжанов Н.")).forEach(commissionMembers::add);
-
+        dto.getCommissions().stream().filter(userDto -> !userDto.getLastName().equals("Рахимжанов") && !userDto.getLastName().equals("Аябекова")).map(userDto -> new ListItem(userDto.getLastName() + " " + userDto.getFirstName(), font)).forEach(commissionMembers::add);
+        commissionMembers.add(new ListItem("Аябекова Д.", font));
         Paragraph student = new Paragraph("По рассмотрению дипломной работы (проекта) обучающегося "
                 + dto.getStudent().getLastName() + " " + dto.getStudent().getFirstName(), font);
 
@@ -56,7 +60,7 @@ public class DocumentUtil {
         String listOfMaterials = "В аттестационную комиссию представлены следующие материалы:\n" +
                 "1) \tтекст дипломной работы (проекта) на cтраницах;\n" +
                 "2) \tотзыв научного руководителя с заключением «допускается к защите»\n" +
-                "3) \tотзыв рецензента с оценкой указывается оценка рецензента\n" +
+                "3) \tотзыв рецензента с оценкой _______\n" +
                 "4) \tсправка о проверке дипломной работы (проекта) на наличии заимствовании\n";
 
 
@@ -64,12 +68,38 @@ public class DocumentUtil {
         String questions = "Обучающемуся были заданы следующие вопросы: ";
         dto.getQuestions().stream().map(question -> new ListItem(question.getQuestioner().getLastName() + " " + question.getQuestioner().getFirstName() + ": " + question.getDescription(), font)).forEach(listOfQuestions::add);
 
-        Paragraph predsedatelSign = new Paragraph("Председатель ____________________________________", font);
-        predsedatelSign.setAlignment(Element.ALIGN_RIGHT);
-        Paragraph signature = new Paragraph("________________________________");
-        signature.setAlignment(Element.ALIGN_RIGHT);
-        Paragraph secretarySign = new Paragraph("Секретарь ____________________________________", font);
-        secretarySign.setAlignment(Element.ALIGN_RIGHT);
+        Paragraph predsedatelSign = new Paragraph("Председатель ___________________________ Рахимжанов Н.", font);
+        predsedatelSign.setAlignment(Element.ALIGN_LEFT);
+
+        Paragraph secretarySign = new Paragraph("Секретарь    _____________________________ Аябекова Д.", font); //TODO Secretary
+        secretarySign.setAlignment(Element.ALIGN_LEFT);
+
+        String grade = null;
+
+        if (dto.getGrade() >= 95) {
+            grade = "A";
+        }
+        if (dto.getGrade() >= 90 && dto.getGrade() <= 94) {
+            grade = "A-";
+        }
+        if (dto.getGrade() >= 85 && dto.getGrade() <= 89) {
+            grade = "B+";
+        }
+        if (dto.getGrade() >= 80 && dto.getGrade() <= 84) {
+            grade = "B";
+        }
+        if (dto.getGrade() >= 75 && dto.getGrade() <= 79) {
+            grade = "B-";
+        }
+        if (dto.getGrade() >= 70 && dto.getGrade() <= 74) {
+            grade = "C+";
+        }
+        if (dto.getGrade() >= 65 && dto.getGrade() <= 69) {
+            grade = "C";
+        }
+        if (dto.getGrade() >= 60 && dto.getGrade() <= 64) {
+            grade = "C-";
+        }
 
         protocol1.open();
         protocol1.add(title);
@@ -89,24 +119,40 @@ public class DocumentUtil {
         protocol1.add(new Paragraph(questions, font));
         protocol1.add(listOfQuestions);
         protocol1.add(new Paragraph("Общая характеристика ответов обучающегося на заданные ему вопросы", font));
-        protocol1.add(new Paragraph("_______________________________________________________________________________________", font));
-        protocol1.add(new Paragraph("_______________________________________________________________________________________ \n", font));
-        protocol1.add(new Paragraph("Признать, что обучающийся выполнил и защитил дипломную работу (проект) с оценкой: " + dto.getGrade().toString(), font));
+        if (grade.contains("A")) {
+            protocol1.add(new Paragraph("- получены исчерпывающие ответы на все вопросы членов комиссии;", font));
+            protocol1.add(new Paragraph("- выпускник демонстрирует глубокие базовые знания;", font));
+        }
+        if (grade.contains("B")) {
+            protocol1.add(new Paragraph("- показывает базовые знания, но не в полном объеме;", font));
+            protocol1.add(new Paragraph("- обучающийся демонстрирует умение анализировать материал, однако не все выводы достаточно аргументированы;", font));
+        }
+        if (grade.contains("C")) {
+            protocol1.add(new Paragraph("- отсутствует ответ на один из вопросов;", font));
+            protocol1.add(new Paragraph("- нарушается последовательность изложения материала и т.д.;", font));
+        }
+        protocol1.add(new Paragraph("Признать, что обучающийся выполнил и защитил дипломную работу (проект) с оценкой: " + grade + " (" + dto.getGrade().toString() + ")", font));
         protocol1.add(new Paragraph("Особые мнения членов комиссии", font));
         protocol1.add(new Paragraph("_______________________________________________________________________________________ \n", font));
         protocol1.add(predsedatelSign);
-        protocol1.add(signature);
-        protocol1.add(signature);
-        protocol1.add(signature);
-        protocol1.add(signature);
-        protocol1.add(signature);
+        for (UserDto commission : dto.getCommissions()) {
+            if (!commission.getLastName().equals("Аябекова") && !commission.getLastName().equals("Рахимжанов")) {
+                Paragraph signature = new Paragraph("                        ___________________________ " + commission.getLastName() + " " + commission.getFirstName(), font);
+                signature.setAlignment(Element.ALIGN_LEFT);
+                protocol1.add(signature);
+            }
+        }
         protocol1.add(secretarySign);
         protocol1.close();
         writer.close();
     }
 
     public static void generateSecondProtocolPdf(InfoForDocumentTemplateDto dto, Reviewer reviewer, String initial) throws IOException, DocumentException {
-        BaseFont newTimesRoman = BaseFont.createFont("diploma-backend/src/main/resources/fonts/timesnrcyrmt.ttf", "cp1251", BaseFont.EMBEDDED);
+        String pathtofont = "/fonts/kztimesnewroman.ttf";
+        String fontname = DocumentUtil.class.getResource(pathtofont).toString();
+        FontFactory.register(fontname);
+        BaseFont newTimesRoman = BaseFont.createFont(fontname,
+                "Cp1166", BaseFont.EMBEDDED);
         Font font = new Font(newTimesRoman, 12, Font.NORMAL);
         Font boldFont = new Font(newTimesRoman, 12, Font.BOLD);
 
@@ -131,15 +177,42 @@ public class DocumentUtil {
 
         Paragraph commissionList = new Paragraph("Члены аттестационной комиссии: ", font);
         List commissionMembers = new List(List.ORDERED);
-        dto.getCommissions().stream().map(commission -> new ListItem(commission.getLastName() + " " + commission.getFirstName(), font)).filter(elements -> !elements.equals("Рахимжанов Н.")).forEach(commissionMembers::add);
-
+        dto.getCommissions().stream().filter(userDto -> !userDto.getLastName().equals("Рахимжанов") && !userDto.getLastName().equals("Аябекова")).map(userDto -> new ListItem(userDto.getLastName() + " " + userDto.getFirstName(), font)).forEach(commissionMembers::add);
+        commissionMembers.add(new ListItem("Аябекова Д.", font));
         Paragraph student = new Paragraph("Обучающийся " + dto.getStudent().getFirstName() + " " + dto.getStudent().getLastName(), font);
 
         Paragraph initialInfo = new Paragraph("по образовательной программе " + initial, font);
 
         Paragraph topicWithGrade = new Paragraph("защитил дипломную работу (проект): " + dto.getDefence().getTopic(), font);
 
-        Paragraph gradeInfo = new Paragraph("с оценкой: " + dto.getGrade().toString(), font);
+        String grade = null;
+
+        if (dto.getGrade() >= 95) {
+            grade = "A";
+        }
+        if (dto.getGrade() >= 90 && dto.getGrade() <= 94) {
+            grade = "A-";
+        }
+        if (dto.getGrade() >= 85 && dto.getGrade() <= 89) {
+            grade = "B+";
+        }
+        if (dto.getGrade() >= 80 && dto.getGrade() <= 84) {
+            grade = "B";
+        }
+        if (dto.getGrade() >= 75 && dto.getGrade() <= 79) {
+            grade = "B-";
+        }
+        if (dto.getGrade() >= 70 && dto.getGrade() <= 74) {
+            grade = "C+";
+        }
+        if (dto.getGrade() >= 65 && dto.getGrade() <= 69) {
+            grade = "C";
+        }
+        if (dto.getGrade() >= 60 && dto.getGrade() <= 64) {
+            grade = "C-";
+        }
+
+        Paragraph gradeInfo = new Paragraph("с оценкой: " + grade + " (" + dto.getGrade().toString() + ")", font);
 
         Paragraph examPass = new Paragraph("Присудить обучающемуся " + dto.getStudent().getFirstName() + " " + dto.getStudent().getLastName(), font);
 
@@ -148,14 +221,13 @@ public class DocumentUtil {
         Paragraph studentPass = new Paragraph("Признать, что обучающийся " + dto.getStudent().getLastName() + " " + dto.getStudent().getFirstName().charAt(0));
 
 
-        Paragraph diplomaInfo = new Paragraph("Выдать диплом о высшем образовании с отличием, без отличия\n");
+        Paragraph diplomaInfo = new Paragraph("Выдать диплом о высшем образовании _________________\n", font);
 
-        Paragraph predsedatelSign = new Paragraph("Председатель ____________________________________", font);
-        predsedatelSign.setAlignment(Element.ALIGN_RIGHT);
-        Paragraph signature = new Paragraph("________________________________");
-        signature.setAlignment(Element.ALIGN_RIGHT);
-        Paragraph secretarySign = new Paragraph("Секретарь ____________________________________", font);
-        secretarySign.setAlignment(Element.ALIGN_RIGHT);
+        Paragraph predsedatelSign = new Paragraph("Председатель ___________________________ Рахимжанов Н.", font);
+        predsedatelSign.setAlignment(Element.ALIGN_LEFT);
+
+        Paragraph secretarySign = new Paragraph("Секретарь      ___________________________ Аябекова Д.", font);
+        secretarySign.setAlignment(Element.ALIGN_LEFT);
 
         protocol2.open();
         protocol2.add(title);
@@ -176,11 +248,13 @@ public class DocumentUtil {
         protocol2.add(new Paragraph("_______________________________________________________________________________________ \n", font));
         protocol2.add(diplomaInfo);
         protocol2.add(predsedatelSign);
-        protocol2.add(signature);
-        protocol2.add(signature);
-        protocol2.add(signature);
-        protocol2.add(signature);
-        protocol2.add(signature);
+        for (UserDto commission : dto.getCommissions()) {
+            if (!commission.getLastName().equals("Аябекова") && !commission.getLastName().equals("Рахимжанов")) {
+                Paragraph signature = new Paragraph("                        ___________________________ " + commission.getLastName() + " " + commission.getFirstName(), font);
+                signature.setAlignment(Element.ALIGN_LEFT);
+                protocol2.add(signature);
+            }
+        }
         protocol2.add(secretarySign);
         protocol2.close();
         writer2.close();
