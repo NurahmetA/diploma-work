@@ -13,7 +13,7 @@ import java.io.IOException;
 public class DocumentUtil {
 
     public static void generateFirstProtocolPdf(InfoForDocumentTemplateDto dto, Reviewer reviewer, String initial) throws IOException, DocumentException {
-        BaseFont newTimesRoman = BaseFont.createFont("C:\\Users\\Nurahmet\\IdeaProjects\\diploma-work\\diploma-backend\\src\\main\\resources\\fonts\\timesnrcyrmt.ttf", "cp1251", BaseFont.EMBEDDED);
+        BaseFont newTimesRoman = BaseFont.createFont("diploma-backend/src/main/resources/fonts/timesnrcyrmt.ttf", "cp1251", BaseFont.EMBEDDED);
         Font font = new Font(newTimesRoman, 12, Font.NORMAL);
         Font boldFont = new Font(newTimesRoman, 12, Font.BOLD);
 
@@ -106,7 +106,7 @@ public class DocumentUtil {
     }
 
     public static void generateSecondProtocolPdf(InfoForDocumentTemplateDto dto, Reviewer reviewer, String initial) throws IOException, DocumentException {
-        BaseFont newTimesRoman = BaseFont.createFont("C:\\Users\\Nurahmet\\IdeaProjects\\diploma-work\\diploma-backend\\src\\main\\resources\\fonts\\timesnrcyrmt.ttf", "cp1251", BaseFont.EMBEDDED);
+        BaseFont newTimesRoman = BaseFont.createFont("diploma-backend/src/main/resources/fonts/timesnrcyrmt.ttf", "cp1251", BaseFont.EMBEDDED);
         Font font = new Font(newTimesRoman, 12, Font.NORMAL);
         Font boldFont = new Font(newTimesRoman, 12, Font.BOLD);
 
