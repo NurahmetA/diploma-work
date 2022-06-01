@@ -31,7 +31,7 @@ public class DocumentUtil {
 
         Paragraph attended = new Paragraph("Присутствовали:", boldFont);
 
-        Paragraph headInfo = new Paragraph("Рахимжанов Н.", font);
+        String headInfo = "Рахимжанов Н.";
 
         Paragraph headCommission = new Paragraph("Председатель аттестационной комиссии:" + headInfo, font);
         Paragraph commissionList = new Paragraph("Члены аттестационной комиссии:", font);
@@ -62,7 +62,7 @@ public class DocumentUtil {
 
         List listOfQuestions = new List(List.ORDERED);
         String questions = "Обучающемуся были заданы следующие вопросы: ";
-        dto.getQuestions().stream().map(question -> new ListItem(question.getQuestioner().getFirstName() + " " + question.getQuestioner().getLastName() + ": " + question.getDescription(), font)).forEach(listOfQuestions::add);
+        dto.getQuestions().stream().map(question -> new ListItem(question.getQuestioner().getLastName() + " " + question.getQuestioner().getFirstName() + ": " + question.getDescription(), font)).forEach(listOfQuestions::add);
 
         Paragraph predsedatelSign = new Paragraph("Председатель ____________________________________", font);
         predsedatelSign.setAlignment(Element.ALIGN_RIGHT);
@@ -77,7 +77,6 @@ public class DocumentUtil {
         protocol1.add(date);
         protocol1.add(attended);
         protocol1.add(headCommission);
-        protocol1.add(headInfo);
         protocol1.add(commissionList);
         protocol1.add(commissionMembers);
         protocol1.add(student);
@@ -129,7 +128,8 @@ public class DocumentUtil {
         String headInfo = "Рахимжанов Н.";
 
         Paragraph headCommission = new Paragraph("Председатель аттестационной комиссии: " + headInfo, font);
-        Paragraph commissionList = new Paragraph("Члены аттестационной комиссии:", font);
+
+        Paragraph commissionList = new Paragraph("Члены аттестационной комиссии: ", font);
         List commissionMembers = new List(List.ORDERED);
         dto.getCommissions().stream().map(commission -> new ListItem(commission.getLastName() + " " + commission.getFirstName(), font)).filter(elements -> !elements.equals("Рахимжанов Н.")).forEach(commissionMembers::add);
 
