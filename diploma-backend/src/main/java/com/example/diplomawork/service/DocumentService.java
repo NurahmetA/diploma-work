@@ -73,7 +73,14 @@ public class DocumentService {
                 .questions(questionInfoDtos)
                 .grade(student.getGrade().getFinalGrade())
                 .build();
-        DocumentUtil.generateFirstProtocolPdf(dto, userTeam.getTeam().getReviewer());
+        String initial = null;
+        if (userTeam.getUser().getGroup().getInitial().getInitial().equals("SE")) {
+            initial = "Software Engineering";
+        }
+        if (userTeam.getUser().getGroup().getInitial().getInitial().equals("IT")) {
+            initial = "Computer Science";
+        }
+        DocumentUtil.generateFirstProtocolPdf(dto, userTeam.getTeam().getReviewer(), initial);
         File path = new File(
                 "protocol1.pdf");
         FileInputStream fl = new FileInputStream(path);
@@ -117,7 +124,16 @@ public class DocumentService {
                 .questions(questionInfoDtos)
                 .grade(student.getGrade().getFinalGrade())
                 .build();
-        DocumentUtil.generateSecondProtocolPdf(dto, userTeam.getTeam().getReviewer());
+
+        String initial = null;
+        if (userTeam.getUser().getGroup().getInitial().getInitial().equals("SE")) {
+            initial = "Software Engineering";
+        }
+        if (userTeam.getUser().getGroup().getInitial().getInitial().equals("IT")) {
+            initial = "Computer Science";
+        }
+
+        DocumentUtil.generateSecondProtocolPdf(dto, userTeam.getTeam().getReviewer(), initial);
         File path = new File(
                 "protocol2.pdf");
         FileInputStream fl = new FileInputStream(path);
