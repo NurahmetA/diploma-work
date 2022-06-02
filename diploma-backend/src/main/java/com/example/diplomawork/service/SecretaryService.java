@@ -47,12 +47,10 @@ public class SecretaryService {
     public void createUpdateQuestion(Long defenceId, QuestionCreateUpdateRequest request) {
         List<Long> studentIds = request.getStudentIds();
         studentIds.stream().map(studentId -> Question.builder()
-                .id(request.getQuestionId() != null ? request.getQuestionId() : null)
                 .questioner(authService.getCurrentUser())
                 .description(request.getDescription())
                 .defence(defenceRepository.findById(defenceId).orElseThrow(() -> new EntityNotFoundException("Defence with id: " + defenceId + " not found")))
                 .responder(userRepository.findById(studentId).orElseThrow(() -> new EntityNotFoundException("User with id: " + studentId + " not found")))
-                .questioner(userRepository.findById(request.getQuestionerId()).orElseThrow(() -> new EntityNotFoundException("User with id: " + studentId + " not found")))
                 .build()).forEach(questionRepository::save);
     }
 

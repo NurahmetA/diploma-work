@@ -36,11 +36,10 @@ public class DocumentUtil {
         Paragraph attended = new Paragraph("Присутствовали:", boldFont);
 
         String headInfo = "Рахимжанов Н.";
-
         Paragraph headCommission = new Paragraph("Председатель аттестационной комиссии:" + headInfo, font);
         Paragraph commissionList = new Paragraph("Члены аттестационной комиссии:", font);
         List commissionMembers = new List(List.ORDERED);
-        dto.getCommissions().stream().filter(userDto -> !userDto.getLastName().equals("Рахимжанов") && !userDto.getLastName().equals("Аябекова")).map(userDto -> new ListItem(userDto.getLastName() + " " + userDto.getFirstName(), font)).forEach(commissionMembers::add);
+        dto.getCommissions().stream().map(userDto -> new ListItem(userDto.getLastName() + " " + userDto.getFirstName(), font)).forEach(commissionMembers::add);
         commissionMembers.add(new ListItem("Аябекова Д.", font));
         Paragraph student = new Paragraph("По рассмотрению дипломной работы (проекта) обучающегося "
                 + dto.getStudent().getLastName() + " " + dto.getStudent().getFirstName(), font);
@@ -71,7 +70,7 @@ public class DocumentUtil {
         Paragraph predsedatelSign = new Paragraph("Председатель ___________________________ Рахимжанов Н.", font);
         predsedatelSign.setAlignment(Element.ALIGN_LEFT);
 
-        Paragraph secretarySign = new Paragraph("Секретарь    _____________________________ Аябекова Д.", font); //TODO Secretary
+        Paragraph secretarySign = new Paragraph("Секретарь     ____________________________ Аябекова Д.", font); //TODO Secretary
         secretarySign.setAlignment(Element.ALIGN_LEFT);
 
         String grade = null;
@@ -133,15 +132,15 @@ public class DocumentUtil {
         }
         protocol1.add(new Paragraph("Признать, что обучающийся выполнил и защитил дипломную работу (проект) с оценкой: " + grade + " (" + dto.getGrade().toString() + ")", font));
         protocol1.add(new Paragraph("Особые мнения членов комиссии", font));
-        protocol1.add(new Paragraph("_______________________________________________________________________________________ \n", font));
+        protocol1.add(new Paragraph("_______________________________________________________________________________________ \n\n\n", font));
         protocol1.add(predsedatelSign);
+
         for (UserDto commission : dto.getCommissions()) {
-            if (!commission.getLastName().equals("Аябекова") && !commission.getLastName().equals("Рахимжанов")) {
-                Paragraph signature = new Paragraph("                        ___________________________ " + commission.getLastName() + " " + commission.getFirstName(), font);
-                signature.setAlignment(Element.ALIGN_LEFT);
-                protocol1.add(signature);
-            }
+            Paragraph commissionInfo = new Paragraph("                        ____________________________ " + commission.getLastName() + " " + commission.getFirstName(), font);
+            commissionInfo.setAlignment(Element.ALIGN_LEFT);
+            protocol1.add(commissionInfo);
         }
+
         protocol1.add(secretarySign);
         protocol1.close();
         writer.close();
@@ -218,9 +217,6 @@ public class DocumentUtil {
 
         Paragraph degree = new Paragraph("Степень бакалавра по образовательной программе " + initial, font);
 
-        Paragraph studentPass = new Paragraph("Признать, что обучающийся " + dto.getStudent().getLastName() + " " + dto.getStudent().getFirstName().charAt(0));
-
-
         Paragraph diplomaInfo = new Paragraph("Выдать диплом о высшем образовании _________________\n", font);
 
         Paragraph predsedatelSign = new Paragraph("Председатель ___________________________ Рахимжанов Н.", font);
@@ -245,15 +241,14 @@ public class DocumentUtil {
         protocol2.add(examPass);
         protocol2.add(degree);
         protocol2.add(new Paragraph("Особые мнения членов комиссии", font));
-        protocol2.add(new Paragraph("_______________________________________________________________________________________ \n", font));
+        protocol2.add(new Paragraph("_______________________________________________________________________________________ \n\n\n", font));
         protocol2.add(diplomaInfo);
         protocol2.add(predsedatelSign);
+
         for (UserDto commission : dto.getCommissions()) {
-            if (!commission.getLastName().equals("Аябекова") && !commission.getLastName().equals("Рахимжанов")) {
-                Paragraph signature = new Paragraph("                        ___________________________ " + commission.getLastName() + " " + commission.getFirstName(), font);
-                signature.setAlignment(Element.ALIGN_LEFT);
-                protocol2.add(signature);
-            }
+            Paragraph commissionInfo = new Paragraph("                        ____________________________ " + commission.getLastName() + " " + commission.getFirstName(), font);
+            commissionInfo.setAlignment(Element.ALIGN_LEFT);
+            protocol2.add(commissionInfo);
         }
         protocol2.add(secretarySign);
         protocol2.close();

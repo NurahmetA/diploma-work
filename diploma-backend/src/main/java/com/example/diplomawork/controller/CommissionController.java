@@ -2,10 +2,8 @@ package com.example.diplomawork.controller;
 
 import com.example.api.CommissionApi;
 import com.example.diplomawork.service.CommissionService;
-import com.example.diplomawork.service.DocumentService;
 import com.example.models.*;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,8 +34,8 @@ public class CommissionController implements CommissionApi {
     }
 
     @Override
-    public ResponseEntity<Void> createDefenceQuestion(Long defenceId, QuestionCreateUpdateRequest request) {
-        commissionService.createUpdateQuestion(defenceId, request);
+    public ResponseEntity<Void> createDefenceQuestion(Long defenceId, CommissionQuestionCreateRequest request) {
+        commissionService.createQuestion(defenceId, request);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
@@ -47,8 +45,8 @@ public class CommissionController implements CommissionApi {
     }
 
     @Override
-    public ResponseEntity<Void> updateDefenceQuestion(Long defenceId, QuestionCreateUpdateRequest request) {
-        commissionService.createUpdateQuestion(defenceId, request);
+    public ResponseEntity<Void> updateDefenceQuestion(Long questionId, CommissionQuestionUpdateRequest request) {
+        commissionService.updateQuestion(questionId, request);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

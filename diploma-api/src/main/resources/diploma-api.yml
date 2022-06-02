@@ -801,30 +801,30 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/QuestionCreateUpdateRequest'
+              $ref: '#/components/schemas/CommissionQuestionCreateRequest'
       responses:
         201:
           description: SUCCESS
 
-  /commission/{defenceId}/question/update:
+  /commission/{questionId}/question/update:
     put:
       tags: [ Commission ]
       summary: Updates question of defence
       operationId: UpdateDefenceQuestion
       parameters:
         - in: path
-          name: defenceId
+          name: questionId
           schema:
             type: integer
             format: int64
           required: true
-          description: Numeric ID of the defence to get
+          description: Numeric ID of the question to get
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/QuestionCreateUpdateRequest'
+              $ref: '#/components/schemas/CommissionQuestionUpdateRequest'
       responses:
         200:
           description: SUCCESS
@@ -1369,9 +1369,6 @@ components:
     QuestionCreateUpdateRequest:
       type: object
       properties:
-        questionId:
-          type: integer
-          format: int64
         description:
           type: string
         studentIds:
@@ -1382,6 +1379,23 @@ components:
         questionerId:
           type: integer
           format: int64
+
+    CommissionQuestionUpdateRequest:
+      type: object
+      properties:
+        description:
+          type: string
+
+    CommissionQuestionCreateRequest:
+      type: object
+      properties:
+        description:
+          type: string
+        studentIds:
+          type: array
+          items:
+            type: integer
+            format: int64
 
     QuestionDto:
       type: object

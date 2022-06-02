@@ -64,16 +64,20 @@ public class CommissionService {
                 .build();
     }
 
-    public void createUpdateQuestion(Long defenceId, QuestionCreateUpdateRequest request) {
+    public void createQuestion(Long defenceId, CommissionQuestionCreateRequest request) {
         List<Long> studentIds = request.getStudentIds();
         studentIds.stream().map(studentId -> Question.builder()
-                .id(request.getQuestionId() != null ? request.getQuestionId() : null)
                 .questioner(authService.getCurrentUser())
                 .description(request.getDescription())
                 .defence(defenceRepository.findById(defenceId).orElseThrow(() -> new EntityNotFoundException("Defence with id: " + defenceId + " not found")))
                 .responder(userRepository.findById(studentId).orElseThrow(() -> new EntityNotFoundException("User with id: " + studentId + " not found")))
-                .questioner(authService.getCurrentUser())
                 .build()).forEach(questionRepository::save);
+    }
+
+    public void updateQuestion(Long questionId, CommissionQuestionUpdateRequest request) {
+        Question question = questionRepository.findById(questionId).orElseThrow(() -> new EntityNotFoundException("Question with id: " + questionId + " not found"));
+        question.setDescription(request.getDescription());
+        questionRepository.save(question);
     }
 
     public void setGrade(Long defenceId, Long studentId, GradeDto grade) {
@@ -113,7 +117,7 @@ public class CommissionService {
 
     public List<UserDto> getDefenceCommissions(Long defenceId) {
         List<DefenceCommission> defenceCommissions = defenceCommissionRepository.findDefenceCommissionsByDefenceId(defenceId);
-        return defenceCommissions.stream().map(defence -> userMapper.entity2dto(defence.getCommission())).collect(Collectors.toList());
+        return defenceCommissions.stream().filter(defence -> !defence.getCommission().getUsername().equals("rakhimzhanov") && !defence.getCommission().getLastName().equals("ayabekova")).map(defence -> userMapper.entity2dto(defence.getCommission())).collect(Collectors.toList());
     }
 
     public List<StudentWithGradeDto> getStudentsWithCommissionGrades(Long defenceId) {
