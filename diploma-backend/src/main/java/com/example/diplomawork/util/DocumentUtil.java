@@ -130,7 +130,7 @@ public class DocumentUtil {
             protocol1.add(new Paragraph("- отсутствует ответ на один из вопросов;", font));
             protocol1.add(new Paragraph("- нарушается последовательность изложения материала и т.д.;", font));
         }
-        protocol1.add(new Paragraph("Признать, что обучающийся выполнил и защитил дипломную работу (проект) с оценкой: " + grade + " (" + dto.getGrade().toString() + ")", font));
+        protocol1.add(new Paragraph("Признать, что обучающийся выполнил и защитил дипломную работу (проект) с оценкой: " + dto.getGrade().toString() + " (" + grade + ")", font));
         protocol1.add(new Paragraph("Особые мнения членов комиссии", font));
         protocol1.add(new Paragraph("_______________________________________________________________________________________ \n\n\n", font));
         protocol1.add(predsedatelSign);
@@ -211,13 +211,13 @@ public class DocumentUtil {
             grade = "C-";
         }
 
-        Paragraph gradeInfo = new Paragraph("с оценкой: " + grade + " (" + dto.getGrade().toString() + ")", font);
+        Paragraph gradeInfo = new Paragraph("с оценкой: " + dto.getGrade().toString() + " (" + grade + ")", font);
 
         Paragraph examPass = new Paragraph("Присудить обучающемуся " + dto.getStudent().getFirstName() + " " + dto.getStudent().getLastName(), font);
 
         Paragraph degree = new Paragraph("Степень бакалавра по образовательной программе " + initial, font);
 
-        Paragraph diplomaInfo = new Paragraph("Выдать диплом о высшем образовании _________________\n", font);
+        Paragraph diplomaInfo = new Paragraph("Выдать диплом о высшем образовании _________________\n\n\n", font);
 
         Paragraph predsedatelSign = new Paragraph("Председатель ___________________________ Рахимжанов Н.", font);
         predsedatelSign.setAlignment(Element.ALIGN_LEFT);
