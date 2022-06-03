@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -100,18 +101,14 @@ public class CommissionService {
     public List<DefenceShortInfoDto> getCommissionDefences() {
         User currentUser = authService.getCurrentUser();
         List<DefenceCommission> defenceCommissions = defenceCommissionRepository.findDefenceCommissionsByCommissionId(currentUser.getId());
-        List<DefenceShortInfoDto> list = new ArrayList<>();
-        defenceCommissions.forEach(defenceCommission -> {
-            Defence defence = defenceCommission.getDefence();
-            DefenceShortInfoDto build = DefenceShortInfoDto.builder()
-                    .id(defence.getId())
-                    .defenceDate(defenceCommission.getDefence().getDefenceDate())
-                    .team(defenceCommission.getDefence().getTeam().getName())
-                    .topic(defenceCommission.getDefence().getTeam().getTopic().getName())
-                    .stage(defence.getStage().getName())
-                    .build();
-            list.add(build);
-        });
+        List<Defence> defences = defenceCommissions.stream().map(DefenceCommission::getDefence).collect(Collectors.toList());
+        List<DefenceShortInfoDto> list = defences.stream().map(defence -> DefenceShortInfoDto.builder()
+                .id(defence.getId())
+                .defenceDate(defence.getDefenceDate())
+                .team(defence.getTeam().getName())
+                .topic(defence.getTeam().getTopic().getName())
+                .stage(defence.getStage().getName())
+                .build()).collect(Collectors.toList());
         return list;
     }
 

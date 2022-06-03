@@ -66,13 +66,13 @@ public class DocumentService {
                 .student(StudentShortInfoDto.builder().firstName(student.getFirstName())
                         .lastName(student.getLastName())
                         .group(student.getGroup().getName())
+                        .isHonor(student.getIsHonor())
                         .build())
                 .defence(defenceInfo)
                 .advisor(advisor)
                 .commissions(commissions)
                 .questions(questionInfoDtos)
                 .grade(student.getGrade().getFinalGrade())
-                .isHonor(student.getIsHonor())
                 .build();
         String initial = null;
         if (userTeam.getUser().getGroup().getInitial().getInitial().equals("SE")) {
@@ -80,6 +80,9 @@ public class DocumentService {
         }
         if (userTeam.getUser().getGroup().getInitial().getInitial().equals("IT")) {
             initial = "Computer Science";
+        }
+        if (userTeam.getUser().getGroup().getInitial().getInitial().equals("MT")) {
+            initial = "Media Technology";
         }
         DocumentUtil.generateFirstProtocolPdf(dto, userTeam.getTeam().getReviewer(), initial);
         File path = new File(
@@ -118,13 +121,13 @@ public class DocumentService {
                 .student(StudentShortInfoDto.builder().firstName(student.getFirstName())
                         .lastName(student.getLastName())
                         .group("SE-1901")
+                        .isHonor(student.getIsHonor())
                         .build())
                 .defence(defenceInfo)
                 .advisor(advisor)
                 .commissions(commissions)
                 .questions(questionInfoDtos)
                 .grade(student.getGrade().getFinalGrade())
-                .isHonor(student.getIsHonor())
                 .build();
 
         String initial = null;
@@ -133,6 +136,9 @@ public class DocumentService {
         }
         if (userTeam.getUser().getGroup().getInitial().getInitial().equals("IT")) {
             initial = "Computer Science";
+        }
+        if (userTeam.getUser().getGroup().getInitial().getInitial().equals("MT")) {
+            initial = "Media Technology";
         }
 
         DocumentUtil.generateSecondProtocolPdf(dto, userTeam.getTeam().getReviewer(), initial);

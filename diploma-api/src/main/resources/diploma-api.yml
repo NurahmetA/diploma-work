@@ -1169,6 +1169,8 @@ components:
           type: string
         email:
           type: string
+        isHonor:
+          type: boolean
 
     RoleDto:
       description: Role info
@@ -1568,8 +1570,6 @@ components:
             $ref: '#/components/schemas/QuestionInfoDto'
         grade:
           type: integer
-        isHonor:
-          type: boolean
 
     StudentShortInfoDto:
       type: object
@@ -1580,3 +1580,5 @@ components:
           type: string
         group:
           type: string
+        isHonor:
+          type: boolean
