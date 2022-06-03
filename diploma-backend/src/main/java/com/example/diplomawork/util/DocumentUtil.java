@@ -21,10 +21,9 @@ public class DocumentUtil {
                 "Cp1166", BaseFont.EMBEDDED);
         Font font = new Font(newTimesRoman, 12, Font.NORMAL);
         Font boldFont = new Font(newTimesRoman, 12, Font.BOLD);
+        Font italic = new Font(newTimesRoman, 12, Font.ITALIC);
 
-
-        Document protocol1 = new Document(PageSize.A4);
-        protocol1.setMargins(30, 30, 0, 0);
+        Document protocol1 = new Document();
         PdfWriter writer = PdfWriter.getInstance(protocol1, new FileOutputStream("protocol1.pdf"));
 
         Paragraph title = new Paragraph("ПРОТОКОЛ № ", font);
@@ -41,32 +40,38 @@ public class DocumentUtil {
         Paragraph headCommission = new Paragraph("Председатель аттестационной комиссии:" + headInfo, font);
         Paragraph commissionList = new Paragraph("Члены аттестационной комиссии:", font);
         List commissionMembers = new List(List.ORDERED);
-        dto.getCommissions().stream().map(userDto -> new ListItem(userDto.getLastName() + " " + userDto.getFirstName(), font)).forEach(commissionMembers::add);
+        dto.getCommissions().stream().map(userDto -> new ListItem(userDto.getLastName() + " " + userDto.getFirstName(), italic)).forEach(commissionMembers::add);
         commissionMembers.add(new ListItem("Аябекова Д.", font));
+        Phrase studentInfo = new Phrase(dto.getStudent().getLastName() + " " + dto.getStudent().getFirstName(), italic);
         Paragraph student = new Paragraph("По рассмотрению дипломной работы (проекта) обучающегося "
-                + dto.getStudent().getLastName() + " " + dto.getStudent().getFirstName(), font);
+                + studentInfo, font);
 
-        Paragraph eduProgram = new Paragraph("по образовательной программе " + initial, font);
+        Phrase eduInfo = new Phrase(initial, italic);
+        Paragraph eduProgram = new Paragraph("по образовательной программе " + eduInfo, font);
 
-        Paragraph topic = new Paragraph("на тему: " + dto.getDefence().getTopic(), font);
+        Phrase topicInfo = new Phrase(dto.getDefence().getTopic(), italic);
+        Paragraph topic = new Paragraph("на тему: " + topicInfo, font);
 
         Paragraph language = new Paragraph("Язык дипломной работы (проекта): английский", font);
 
-        Paragraph adviser = new Paragraph("Дипломная работа (проект) обучающегося выполнена под научным руководством:\n "
-                + dto.getAdvisor().getLastName() + " " + dto.getAdvisor().getFirstName(), font);
+        Paragraph adviser = new Paragraph("Дипломная работа (проект) обучающегося выполнена под научным руководством:", font);
+        Paragraph adviserInfo = new Paragraph(dto.getAdvisor().getLastName() + " " + dto.getAdvisor().getFirstName(), italic);
 
-        Paragraph reviewerInfo = new Paragraph("Рецензент:\n"
-                + reviewer.getFullName() + ", " + reviewer.getCareerGrade() + ", " + reviewer.getWorkPlace() + ", " + reviewer.getProfession(), font);
+        Paragraph reviewerInfo = new Paragraph("Рецензент:\n", font);
+
+        Paragraph reviewerItaic = new Paragraph(reviewer.getFullName() + ", " + reviewer.getCareerGrade() + ", " + reviewer.getWorkPlace() + ", " + reviewer.getProfession(), italic);
+
+        Paragraph pass = new Paragraph("\"допускается к защите\"", italic);
 
         String listOfMaterials = "В аттестационную комиссию представлены следующие материалы:\n" +
-                "1) \tтекст дипломной работы (проекта) на cтраницах;\n" +
-                "2) \tотзыв научного руководителя с заключением «допускается к защите»\n" +
+                "1) \tтекст дипломной работы (проекта) на cтраницах _________;\n" +
+                "2) \tотзыв научного руководителя с заключением " + pass + "\n" +
                 "3) \tотзыв рецензента с оценкой _______\n" +
                 "4) \tсправка о проверке дипломной работы (проекта) на наличии заимствовании\n";
 
         List listOfQuestions = new List(List.ORDERED);
         String questions = "Обучающемуся были заданы следующие вопросы: ";
-        dto.getQuestions().stream().map(question -> new ListItem(question.getQuestioner().getLastName() + " " + question.getQuestioner().getFirstName() + ": " + question.getDescription(), font)).forEach(listOfQuestions::add);
+        dto.getQuestions().stream().map(question -> new ListItem(question.getQuestioner().getLastName() + " " + question.getQuestioner().getFirstName() + ": " + question.getDescription(), italic)).forEach(listOfQuestions::add);
 
         Paragraph predsedatelSign = new Paragraph("Председатель ___________________________ Рахимжанов Н.", font);
         predsedatelSign.setAlignment(Element.ALIGN_LEFT);
@@ -114,7 +119,9 @@ public class DocumentUtil {
         protocol1.add(topic);
         protocol1.add(language);
         protocol1.add(adviser);
+        protocol1.add(adviserInfo);
         protocol1.add(reviewerInfo);
+        protocol1.add(reviewerItaic);
         protocol1.add(new Paragraph(listOfMaterials, font));
         protocol1.add(new Paragraph(questions, font));
         protocol1.add(listOfQuestions);
@@ -131,13 +138,15 @@ public class DocumentUtil {
             protocol1.add(new Paragraph("- отсутствует ответ на один из вопросов;", font));
             protocol1.add(new Paragraph("- нарушается последовательность изложения материала и т.д.;", font));
         }
-        protocol1.add(new Paragraph("Признать, что обучающийся выполнил и защитил дипломную работу (проект) с оценкой: " + dto.getGrade().toString() + " (" + grade + ")", font));
+
+        Phrase gradeInfo = new Phrase(dto.getGrade().toString() + " (" + grade + ")", italic);
+        protocol1.add(new Paragraph("Признать, что обучающийся выполнил и защитил дипломную работу (проект) с оценкой: " + gradeInfo, font));
         protocol1.add(new Paragraph("Особые мнения членов комиссии", font));
         protocol1.add(new Paragraph("_______________________________________________________________________________________ \n\n\n", font));
         protocol1.add(predsedatelSign);
 
         for (UserDto commission : dto.getCommissions()) {
-            Paragraph commissionInfo = new Paragraph("                        __________________________ " + commission.getLastName() + " " + commission.getFirstName(), font);
+            Paragraph commissionInfo = new Paragraph("                        ___________________________ " + commission.getLastName() + " " + commission.getFirstName(), font);
             commissionInfo.setAlignment(Element.ALIGN_LEFT);
             protocol1.add(commissionInfo);
         }
@@ -155,6 +164,7 @@ public class DocumentUtil {
                 "Cp1166", BaseFont.EMBEDDED);
         Font font = new Font(newTimesRoman, 12, Font.NORMAL);
         Font boldFont = new Font(newTimesRoman, 12, Font.BOLD);
+        Font italic = new Font(newTimesRoman, 12, Font.ITALIC);
 
         Document protocol2 = new Document();
         PdfWriter writer2 = PdfWriter.getInstance(protocol2, new FileOutputStream("protocol2.pdf"));
@@ -167,7 +177,7 @@ public class DocumentUtil {
 
         Paragraph date = new Paragraph("Дата ____________", boldFont);
 
-        Paragraph header = new Paragraph("о присуждении степени бакалавра обучающемуся, защитившему дипломную работу (проект).\n\n", font);
+        Paragraph header = new Paragraph("о присуждении степени бакалавра обучающемуся, защитившему дипломную работу (проект).\n", font);
 
         Paragraph attended = new Paragraph("Присутствовали:", boldFont);
 
@@ -177,13 +187,17 @@ public class DocumentUtil {
 
         Paragraph commissionList = new Paragraph("Члены аттестационной комиссии: ", font);
         List commissionMembers = new List(List.ORDERED);
-        dto.getCommissions().stream().filter(userDto -> !userDto.getLastName().equals("Рахимжанов") && !userDto.getLastName().equals("Аябекова")).map(userDto -> new ListItem(userDto.getLastName() + " " + userDto.getFirstName(), font)).forEach(commissionMembers::add);
-        commissionMembers.add(new ListItem("Аябекова Д.", font));
-        Paragraph student = new Paragraph("\nОбучающийся " + dto.getStudent().getFirstName() + " " + dto.getStudent().getLastName(), font);
+        dto.getCommissions().stream().filter(userDto -> !userDto.getLastName().equals("Рахимжанов") && !userDto.getLastName().equals("Аябекова")).map(userDto -> new ListItem(userDto.getLastName() + " " + userDto.getFirstName(), italic)).forEach(commissionMembers::add);
+        commissionMembers.add(new ListItem("Аябекова Д.", italic));
 
-        Paragraph initialInfo = new Paragraph("по образовательной программе " + initial + "\n", font);
+        Phrase studentInfo = new Phrase(dto.getStudent().getLastName() + " " + dto.getStudent().getFirstName(), italic);
+        Paragraph student = new Paragraph("\nОбучающийся " + studentInfo, font);
 
-        Paragraph topicWithGrade = new Paragraph("защитил дипломную работу (проект): " + dto.getDefence().getTopic() + "\n\n", font);
+        Phrase initialItalic = new Phrase(initial, italic);
+        Paragraph initialInfo = new Paragraph("по образовательной программе " + initialItalic + "\n", font);
+
+        Phrase topicItalic = new Phrase(dto.getDefence().getTopic(), italic);
+        Paragraph topicWithGrade = new Paragraph("защитил дипломную работу (проект): " + topicItalic + "\n\n", font);
 
         String grade = null;
 
@@ -212,11 +226,16 @@ public class DocumentUtil {
             grade = "C-";
         }
 
-        Paragraph gradeInfo = new Paragraph("с оценкой: " + dto.getGrade().toString() + " (" + grade + ")" + "\n", font);
+        Phrase gradeItalic = new Phrase(dto.getGrade().toString() + " (" + grade + ")", italic);
+        Paragraph gradeInfo = new Paragraph("с оценкой: " + gradeItalic + "\n", font);
 
-        Paragraph examPass = new Paragraph("Присудить обучающемуся " + dto.getStudent().getFirstName() + " " + dto.getStudent().getLastName(), font);
+        Phrase studentShort = new Phrase(dto.getStudent().getFirstName() + " " + dto.getStudent().getLastName().charAt(0), italic);
 
-        Paragraph degree = new Paragraph("Степень бакалавр информационно-коммуникационные технологии по образовательной программе " + initial + "\n", font);
+        Paragraph examPass = new Paragraph("Присудить обучающемуся " + studentShort, font);
+
+        Phrase ictItalic = new Phrase("Информационно-коммуникационные технологии", italic);
+
+        Paragraph degree = new Paragraph("Степень бакалавр " + ictItalic + " по образовательной программе " + initialItalic + "\n", font);
 
         String isHonor = "без отличия";
 
@@ -224,7 +243,8 @@ public class DocumentUtil {
             isHonor = "с отличием";
         }
 
-        Paragraph diplomaInfo = new Paragraph("Выдать диплом о высшем образовании" + " " + isHonor + "\n", font);
+        Phrase honor = new Phrase(isHonor, italic);
+        Paragraph diplomaInfo = new Paragraph("Выдать диплом о высшем образовании" + " " + honor + "\n\n\n", font);
 
         Paragraph predsedatelSign = new Paragraph("Председатель ___________________________ Рахимжанов Н.", font);
         predsedatelSign.setAlignment(Element.ALIGN_LEFT);
@@ -248,12 +268,12 @@ public class DocumentUtil {
         protocol2.add(examPass);
         protocol2.add(degree);
         protocol2.add(new Paragraph("Особые мнения членов комиссии", font));
-        protocol2.add(new Paragraph("_______________________________________________________________________________________ \n\n\n", font));
+        protocol2.add(new Paragraph("_______________________________________________________________________________________ \n", font));
         protocol2.add(diplomaInfo);
         protocol2.add(predsedatelSign);
 
         for (UserDto commission : dto.getCommissions()) {
-            Paragraph commissionInfo = new Paragraph("                        __________________________ " + commission.getLastName() + " " + commission.getFirstName(), font);
+            Paragraph commissionInfo = new Paragraph("                        ___________________________ " + commission.getLastName() + " " + commission.getFirstName(), font);
             commissionInfo.setAlignment(Element.ALIGN_LEFT);
             protocol2.add(commissionInfo);
         }
