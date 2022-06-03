@@ -72,6 +72,7 @@ public class DocumentService {
                 .commissions(commissions)
                 .questions(questionInfoDtos)
                 .grade(student.getGrade().getFinalGrade())
+                .isHonor(student.getIsHonor())
                 .build();
         String initial = null;
         if (userTeam.getUser().getGroup().getInitial().getInitial().equals("SE")) {
@@ -123,6 +124,7 @@ public class DocumentService {
                 .commissions(commissions)
                 .questions(questionInfoDtos)
                 .grade(student.getGrade().getFinalGrade())
+                .isHonor(student.getIsHonor())
                 .build();
 
         String initial = null;

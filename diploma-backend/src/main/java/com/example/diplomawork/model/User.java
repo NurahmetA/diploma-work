@@ -46,6 +46,8 @@ public class User {
     @OneToOne(mappedBy = "student")
     private UserGrade grade;
 
+    private Boolean isHonor;
+
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     List<UserTeam> userTeams;
 

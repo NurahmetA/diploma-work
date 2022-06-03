@@ -1568,6 +1568,8 @@ components:
             $ref: '#/components/schemas/QuestionInfoDto'
         grade:
           type: integer
+        isHonor:
+          type: boolean
 
     StudentShortInfoDto:
       type: object
