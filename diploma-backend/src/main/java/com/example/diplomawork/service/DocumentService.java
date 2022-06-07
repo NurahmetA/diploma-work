@@ -84,6 +84,12 @@ public class DocumentService {
         if (userTeam.getUser().getGroup().getInitial().getInitial().equals("MT")) {
             initial = "Media Technology";
         }
+        if (userTeam.getUser().getGroup().getInitial().getInitial().equals("BDA")) {
+            initial = "Big Data Analysis";
+        }
+        if (userTeam.getUser().getGroup().getInitial().getInitial().equals("CS")) {
+            initial = "Cyber Security";
+        }
         DocumentUtil.generateFirstProtocolPdf(dto, userTeam.getTeam().getReviewer(), initial);
         File path = new File(
                 "protocol1.pdf");
@@ -139,6 +145,12 @@ public class DocumentService {
         }
         if (userTeam.getUser().getGroup().getInitial().getInitial().equals("MT")) {
             initial = "Media Technology";
+        }
+        if (userTeam.getUser().getGroup().getInitial().getInitial().equals("BDA")) {
+            initial = "Big Data Analysis";
+        }
+        if (userTeam.getUser().getGroup().getInitial().getInitial().equals("CS")) {
+            initial = "Cyber Security";
         }
 
         DocumentUtil.generateSecondProtocolPdf(dto, userTeam.getTeam().getReviewer(), initial);
