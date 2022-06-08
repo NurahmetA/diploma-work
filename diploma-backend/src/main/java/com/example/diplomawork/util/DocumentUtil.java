@@ -36,7 +36,7 @@ public class DocumentUtil {
 
         Paragraph attended = new Paragraph("Присутствовали:", boldFont);
 
-        String headInfo = "Башеев Б.";
+        String headInfo = "Рахимжанов Н.";
         Paragraph headCommission = new Paragraph("Председатель аттестационной комиссии:" + headInfo, font);
         Paragraph commissionList = new Paragraph("Члены аттестационной комиссии:", font);
         List commissionMembers = new List(List.ORDERED);
@@ -80,7 +80,7 @@ public class DocumentUtil {
         String questions = "Обучающемуся были заданы следующие вопросы: ";
         dto.getQuestions().stream().map(question -> new ListItem(question.getQuestioner().getLastName() + " " + question.getQuestioner().getFirstName() + ": " + question.getDescription(), italic)).forEach(listOfQuestions::add);
 
-        Paragraph predsedatelSign = new Paragraph("                        Председатель ___________________________ Башеев Б.", font);
+        Paragraph predsedatelSign = new Paragraph("                        Председатель ___________________________ Рахимжанов Н.", font);
         predsedatelSign.setAlignment(Element.ALIGN_LEFT);
 
         Paragraph secretarySign = new Paragraph("                        Секретарь      ___________________________ Аябекова Д.", font);
@@ -188,13 +188,13 @@ public class DocumentUtil {
 
         Paragraph attended = new Paragraph("Присутствовали:", boldFont);
 
-        String headInfo = "Башеев Б.";
+        String headInfo = "Рахимжанов Н.";
 
         Paragraph headCommission = new Paragraph("Председатель аттестационной комиссии:" + " " + headInfo, font);
 
         Paragraph commissionList = new Paragraph("Члены аттестационной комиссии: ", font);
         List commissionMembers = new List(List.ORDERED);
-        dto.getCommissions().stream().map(userDto -> new ListItem(userDto.getLastName() + " " + userDto.getFirstName(), italic)).forEach(commissionMembers::add);
+        dto.getCommissions().stream().filter(userDto -> !userDto.getLastName().equals("Рахимжанов") && !userDto.getLastName().equals("Аябекова")).map(userDto -> new ListItem(userDto.getLastName() + " " + userDto.getFirstName(), italic)).forEach(commissionMembers::add);
         commissionMembers.add(new ListItem("Аябекова Д.", italic));
 
         Chunk studentText1 = new Chunk("Обучающийся ", font);
@@ -276,7 +276,7 @@ public class DocumentUtil {
         diplomaInfo.add(diplomaInfoText);
         diplomaInfo.add(honor);
 
-        Paragraph predsedatelSign = new Paragraph("                        Председатель ___________________________ Башеев Б.", font);
+        Paragraph predsedatelSign = new Paragraph("                        Председатель ___________________________ Рахимжанов Н.", font);
         predsedatelSign.setAlignment(Element.ALIGN_LEFT);
 
         Paragraph secretarySign = new Paragraph("                        Секретарь      ___________________________ Аябекова Д.", font);

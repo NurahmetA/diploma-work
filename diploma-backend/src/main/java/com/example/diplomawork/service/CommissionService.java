@@ -114,7 +114,7 @@ public class CommissionService {
 
     public List<UserDto> getDefenceCommissions(Long defenceId) {
         List<DefenceCommission> defenceCommissions = defenceCommissionRepository.findDefenceCommissionsByDefenceId(defenceId);
-        return defenceCommissions.stream().filter(defence -> !defence.getCommission().getUsername().equals("basheeyev") && !defence.getCommission().getUsername().equals("ayabekova")).map(defence -> userMapper.entity2dto(defence.getCommission())).collect(Collectors.toList());
+        return defenceCommissions.stream().filter(defence -> !defence.getCommission().getUsername().equals("rakhimzhanov") && !defence.getCommission().getUsername().equals("ayabekova")).map(defence -> userMapper.entity2dto(defence.getCommission())).collect(Collectors.toList());
     }
 
     public List<StudentWithGradeDto> getStudentsWithCommissionGrades(Long defenceId) {
