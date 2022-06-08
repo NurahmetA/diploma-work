@@ -2,10 +2,7 @@ package com.example.diplomawork.controller;
 
 import com.example.api.StudentApi;
 import com.example.diplomawork.service.StudentService;
-import com.example.models.TeamCreateUpdateRequest;
-import com.example.models.TeamInfoWithMembersDto;
-import com.example.models.TeamJoinRequestInfoByBlocksDto;
-import com.example.models.UserTeamInfoByBlockDto;
+import com.example.models.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +16,21 @@ public class StudentController implements StudentApi {
 
     private final StudentService studentService;
 
+    @Override
+    public ResponseEntity<Void> createRequestToTopic(Long topicId) {
+        studentService.createRequestToTopic(topicId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<List<TeamShortInfoDto>> getAvailableTeams() {
+        return ResponseEntity.ok(studentService.getAvailableTeams());
+    }
+
+    @Override
+    public ResponseEntity<List<TopicShortInfoDto>> getAvailableTopics() {
+        return ResponseEntity.ok(studentService.getAvailableTopics());
+    }
     @Override
     public ResponseEntity<Void> acceptTeamJoinRequest(Long requestId) {
         studentService.acceptTeamJoinRequest(requestId);
@@ -43,7 +55,7 @@ public class StudentController implements StudentApi {
     }
 
     @Override
-    public ResponseEntity<List<UserTeamInfoByBlockDto>> getTeamRequests() {
+    public ResponseEntity<List<UserTeamRequestDto>> getTeamRequests() {
         return ResponseEntity.ok(studentService.getTeamJoinRequests());
     }
 

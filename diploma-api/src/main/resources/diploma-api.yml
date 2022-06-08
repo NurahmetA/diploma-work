@@ -7,7 +7,22 @@ paths:
   /student/teams:
     get:
       tags: [ Student ]
-      description: Get user team
+      description: Get available teams
+      operationId: getAvailableTeams
+      responses:
+        '200':
+          description: Status is OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TeamShortInfoDto'
+
+  /student/team:
+    get:
+      tags: [ Student ]
+      description: Get student's team info
       operationId: getTeam
       responses:
         '200':
@@ -30,7 +45,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/UserTeamInfoByBlockDto'
+                  $ref: '#/components/schemas/UserTeamRequestDto'
 
   /student/teams/request/check:
     get:
@@ -110,11 +125,43 @@ paths:
         204:
           description: Success
 
-  /advisor/topics:
+  /student/topics:
+    get:
+      tags: [ Student ]
+      summary: Gets all available topics
+      operationId: getAvailableTopics
+      responses:
+        '200':
+          description: SUCCESS
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TopicShortInfoDto'
+
+  /student/topics/{topicId}/request:
+    post:
+      summary: Creates a request to choose the topic
+      tags: [ Student ]
+      operationId: createRequestToTopic
+      parameters:
+        - in: path
+          name: topicId
+          schema:
+            type: integer
+            format: int64
+          required: true
+          description: Team ID
+      responses:
+        201:
+          description: Success
+
+  /advisor/topics/confirmed:
     get:
       tags: [ Advisor ]
-      description: Get list of available topics
-      operationId: getAvailableTopics
+      description: Get list of confirmed adviser topics
+      operationId: getConfirmedTopics
       responses:
         '200':
           description: Status is OK
@@ -123,7 +170,22 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/TopicInfoByBlocksDto'
+                  $ref: '#/components/schemas/TopicShortInfoDto'
+
+  /advisor/topics/unconfirmed:
+    get:
+      tags: [ Advisor ]
+      description: Get list of unconfirmed adviser topics
+      operationId: getUnconfirmedTopics
+      responses:
+        '200':
+          description: Status is OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TopicShortInfoDto'
 
   /advisor/topics/{topicId}:
     get:
@@ -191,11 +253,19 @@ paths:
         204:
           description: Success
 
-  /advisor/requests:
+  /advisor/{topicId}/requests:
     get:
       tags: [ Advisor ]
       summary: Get team-topic requests
-      operationId: getAdvisorRequests
+      operationId: getTopicRequests
+      parameters:
+        - in: path
+          name: topicId
+          schema:
+            type: integer
+            format: int64
+          required: true
+          description: Numeric ID of the topic to get
       responses:
         '200':
           description: Status is OK
@@ -203,6 +273,30 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TopicInfoByBlocksDto'
+
+  /advisor/{topicId}/requests/{requestId}:
+    post:
+      tags: [ Advisor ]
+      summary: Accept the team-topic request
+      operationId: acceptTopicRequests
+      parameters:
+        - in: path
+          name: topicId
+          schema:
+            type: integer
+            format: int64
+          required: true
+          description: Numeric ID of the topic to get
+        - in: path
+          name: requestId
+          schema:
+            type: integer
+            format: int64
+          required: true
+          description: Numeric ID of the request to accept
+      responses:
+        '200':
+          description: Status is OK
 
   /auth/signup:
     post:
@@ -1073,6 +1167,8 @@ components:
           $ref: '#/components/schemas/TopicDto'
         creator:
           $ref: '#/components/schemas/UserDto'
+        team:
+          $ref: '#/components/schemas/TeamInfoWithMembersDto'
 
     InitialDto:
       description: Group initials
@@ -1212,12 +1308,9 @@ components:
           format: int64
         name:
           type: string
-        initial:
-          type: string
       required:
         - creatorId
         - name
-        - initial
 
     RegisterRequest:
       type: object
@@ -1464,7 +1557,7 @@ components:
     #          items:
     #            $ref: '#/components/schemas/GroupDto'
 
-    UserTeamInfoByBlockDto:
+    UserTeamRequestDto:
       type: object
       properties:
         id:
@@ -1472,10 +1565,6 @@ components:
           format: int64
         user:
           $ref: '#/components/schemas/UserDto'
-        team:
-          $ref: '#/components/schemas/TeamShortInfoDto'
-        group:
-          $ref: '#/components/schemas/GroupDto'
 
     TeamInfoWithMembersDto:
       type: object
@@ -1582,3 +1671,14 @@ components:
           type: string
         isHonor:
           type: boolean
+
+    TopicShortInfoDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        topicName:
+          type: string
+        advisor:
+          type: string

@@ -4,20 +4,17 @@ import com.example.diplomawork.mapper.GroupMapper;
 import com.example.diplomawork.mapper.JoinRequestMapper;
 import com.example.diplomawork.mapper.TeamMapper;
 import com.example.diplomawork.mapper.UserMapper;
-import com.example.diplomawork.model.Team;
-import com.example.diplomawork.model.User;
-import com.example.diplomawork.model.UserTeam;
-import com.example.diplomawork.repository.TeamRepository;
-import com.example.diplomawork.repository.TopicRepository;
-import com.example.diplomawork.repository.UserRepository;
-import com.example.diplomawork.repository.UserTeamRepository;
+import com.example.diplomawork.model.*;
+import com.example.diplomawork.repository.*;
 import com.example.models.*;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.MethodNotAllowedException;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,6 +32,8 @@ public class StudentService {
     private final UserRepository userRepository;
 
     private final UserTeamRepository userTeamRepository;
+
+    private final TeamTopicRepository teamTopicRepository;
 
     private final TeamMapper teamMapper;
 
@@ -62,15 +61,13 @@ public class StudentService {
                 .build());
     }
 
-    public List<UserTeamInfoByBlockDto> getTeamJoinRequests() {
+    public List<UserTeamRequestDto> getTeamJoinRequests() {
         User currentUser = authService.getCurrentUser();
         Team team = teamRepository.findByCreatorId(currentUser.getId()).orElseThrow(() -> new EntityNotFoundException("Team with creator id: " + currentUser.getId() + " not found"));
         return userTeamRepository.findAllByTeamIdAndAcceptedFalse(team.getId())
-                .stream().map(userTeam -> UserTeamInfoByBlockDto.builder()
+                .stream().map(userTeam -> UserTeamRequestDto.builder()
                         .id(userTeam.getId())
-                        .team(teamMapper.entity2dto(userTeam.getTeam()))
                         .user(userMapper.entity2dto(userTeam.getUser()))
-                        .group(groupMapper.entity2dto(userTeam.getUser().getGroup()))
                         .build()).collect(Collectors.toList());
     }
 
@@ -117,5 +114,27 @@ public class StudentService {
 
     public List<TeamShortInfoDto> getAvailableTeams() {
         return teamRepository.findAllByConfirmedFalse().stream().map(teamMapper::entity2dto).collect(Collectors.toList());
+    }
+
+    @SneakyThrows
+    public void createRequestToTopic(Long topicId) {
+        User currentUser = authService.getCurrentUser();
+        Team team = teamRepository.findByCreatorId(authService.getCurrentUser().getId()).orElseThrow(() -> new EntityNotFoundException("Team with creator id: " + currentUser.getId() + " not found"));
+        if (team == null) {
+            throw new IllegalAccessException("Action is not allowed!");
+        }
+        TeamTopic request = TeamTopic.builder()
+                .team(team)
+                .topic(topicRepository.findById(topicId).orElseThrow(() -> new EntityNotFoundException("Topic not found!")))
+                .build();
+        teamTopicRepository.save(request);
+    }
+
+
+    public List<TopicShortInfoDto> getAvailableTopics() {
+        List<Topic> topics = topicRepository.findAllBySelectedFalse();
+        return topics.stream().map(topic -> TopicShortInfoDto.builder().id(topic.getId()).topicName(topic.getName())
+                .advisor(topic.getCreator().getLastName() + " " + topic.getCreator().getFirstName())
+                .build()).collect(Collectors.toList());
     }
 }
