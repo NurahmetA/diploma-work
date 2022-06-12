@@ -15,4 +15,6 @@ public interface UserTeamRepository extends JpaRepository<UserTeam, Long> {
     List<UserTeam> findAllByTeamIdAndAcceptedTrue(Long teamId);
 
     List<UserTeam> findAllByUserId(Long userId);
+
+    void deleteByTeamIdAndUserIdAndAcceptedTrue(Long teamId, Long userId);
 }

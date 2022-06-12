@@ -101,4 +101,16 @@ public class AdvisorService {
                 .topicName(topic.getName())
                 .build()).collect(Collectors.toList());
     }
+
+    public TopicSelectRequestFullInfoDto getRequestFullInfo(Long topicId, Long requestId) {
+        TeamTopic teamTopic = teamTopicRepository.findById(requestId).orElseThrow(() -> new EntityNotFoundException("Request with id: " + requestId + " not found"));
+        List<UserTeam> users = userTeamRepository.findAllByTeamIdAndAcceptedTrue(teamTopic.getTeam().getId());
+        List<UserDto> members = users.stream().map(user -> userMapper.entity2dto(user.getUser())).collect(Collectors.toList());
+        return TopicSelectRequestFullInfoDto.builder()
+                .id(teamTopic.getId())
+                .team(teamTopic.getTeam().getName())
+                .topic(teamTopic.getTopic().getName())
+                .members(members)
+                .build();
+    }
 }

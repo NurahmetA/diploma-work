@@ -2,10 +2,7 @@ package com.example.diplomawork.controller;
 
 import com.example.api.AdvisorApi;
 import com.example.diplomawork.service.AdvisorService;
-import com.example.models.TopicCreateUpdateRequest;
-import com.example.models.TopicInfoByBlocksDto;
-import com.example.models.TopicSelectRequestDto;
-import com.example.models.TopicShortInfoDto;
+import com.example.models.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +15,11 @@ import java.util.List;
 public class AdvisorController implements AdvisorApi {
 
     private final AdvisorService advisorService;
+
+    @Override
+    public ResponseEntity<TopicSelectRequestFullInfoDto> getTeamTopicRequestFullInfo(Long topicId, Long requestId) {
+        return ResponseEntity.ok(advisorService.getRequestFullInfo(topicId, requestId));
+    }
 
     @Override
     public ResponseEntity<Void> acceptTopicRequests(Long topicId, Long requestId) {

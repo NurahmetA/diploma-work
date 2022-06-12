@@ -1,6 +1,5 @@
 package com.example.diplomawork.service;
 
-import com.example.diplomawork.mapper.GroupMapper;
 import com.example.diplomawork.mapper.JoinRequestMapper;
 import com.example.diplomawork.mapper.TeamMapper;
 import com.example.diplomawork.mapper.UserMapper;
@@ -11,10 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.MethodNotAllowedException;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,8 +35,6 @@ public class StudentService {
     private final TeamMapper teamMapper;
 
     private final UserMapper userMapper;
-
-    private final GroupMapper groupMapper;
 
     private final JoinRequestMapper joinRequestMapper;
 
@@ -136,5 +131,11 @@ public class StudentService {
         return topics.stream().map(topic -> TopicShortInfoDto.builder().id(topic.getId()).topicName(topic.getName())
                 .advisor(topic.getCreator().getLastName() + " " + topic.getCreator().getFirstName())
                 .build()).collect(Collectors.toList());
+    }
+
+    public void removeTeamMember(Long memberId) {
+        User currentUser = authService.getCurrentUser();
+        Team team = teamRepository.findByCreatorId(currentUser.getId()).orElseThrow(() -> new EntityNotFoundException("Team not found"));
+        userTeamRepository.deleteByTeamIdAndUserIdAndAcceptedTrue(team.getId(), memberId);
     }
 }
