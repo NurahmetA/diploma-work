@@ -12,4 +12,8 @@ public interface TopicRepository extends JpaRepository<Topic, Long> {
     Topic findByName(String topicName);
 
     List<Topic> findAllBySelectedTrue();
+
+    List<Topic> findAllByCreatorIdAndSelectedFalse(Long creatorId);
+
+    List<Topic> findAllByCreatorIdAndSelectedTrue(Long creatorId);
 }

@@ -129,4 +129,8 @@ public class CommissionService {
         });
         return students;
     }
+
+    public void deleteDefenceQuestion(Long questionId) {
+        questionRepository.deleteById(questionId);
+    }
 }

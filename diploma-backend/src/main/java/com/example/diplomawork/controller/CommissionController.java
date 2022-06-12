@@ -16,6 +16,11 @@ public class CommissionController implements CommissionApi {
 
     private final CommissionService commissionService;
 
+    @Override
+    public ResponseEntity<Void> deleteDefenceQuestion(Long questionId) {
+        commissionService.deleteDefenceQuestion(questionId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
     @Override
     public ResponseEntity<List<StudentWithGradeDto>> getStudentsWithCommissionGrades(Long defenceId) {

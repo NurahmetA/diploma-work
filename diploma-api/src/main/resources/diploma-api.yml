@@ -272,7 +272,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TopicInfoByBlocksDto'
+                type: array
+                items:
+                  $ref: '#/components/schemas/TopicSelectRequestDto'
 
   /advisor/{topicId}/requests/{requestId}:
     post:
@@ -923,6 +925,23 @@ paths:
         200:
           description: SUCCESS
 
+  /commission/{questionId}/question/delete:
+    delete:
+      tags: [ Commission ]
+      summary: Delete question of defence
+      operationId: DeleteDefenceQuestion
+      parameters:
+        - in: path
+          name: questionId
+          schema:
+            type: integer
+            format: int64
+          required: true
+          description: Numeric ID of the question to get
+      responses:
+        200:
+          description: SUCCESS
+
   /secretary/defence:
     get:
       tags: [ Secretary ]
@@ -1331,6 +1350,15 @@ components:
         - email
         - username
         - password
+
+    TopicSelectRequestDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        team:
+          type: string
 
     CreateCommissionMemberRequest:
       type: object
