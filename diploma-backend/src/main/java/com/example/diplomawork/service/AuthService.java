@@ -5,9 +5,7 @@ import com.example.diplomawork.mapper.RoleMapper;
 import com.example.diplomawork.model.Role;
 import com.example.diplomawork.model.User;
 import com.example.diplomawork.model.VerificationToken;
-import com.example.diplomawork.repository.RoleRepository;
-import com.example.diplomawork.repository.UserRepository;
-import com.example.diplomawork.repository.VerificationTokenRepository;
+import com.example.diplomawork.repository.*;
 import com.example.diplomawork.security.JwtProvider;
 import com.example.models.AuthenticationResponse;
 import com.example.models.LoginRequest;
@@ -44,8 +42,8 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
     private final RefreshTokenService refreshTokenService;
-
-    private final RoleMapper roleMapper;
+    private final TeamRepository teamRepository;
+    private final UserTeamRepository userTeamRepository;
 
     public void signup(RegisterRequest request) {
         User user = User.builder()
@@ -102,6 +100,8 @@ public class AuthService {
         authenticationResponse.setUsername(request.getUsername());
         User user = userRepository.findByUsername(request.getUsername()).orElseThrow(() -> new EntityNotFoundException("User with username:" + request.getUsername() + "not found"));
         authenticationResponse.setRole(user.getRole().getName());
+        authenticationResponse.setIsTeamCreator(teamRepository.existsByCreatorId(user.getId()));
+        authenticationResponse.setIsTeamMember(userTeamRepository.existsByUserIdAndAcceptedTrue(user.getId()));
         return authenticationResponse;
     }
 

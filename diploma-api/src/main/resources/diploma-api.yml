@@ -1488,6 +1488,10 @@ components:
         expiresAt:
           type: string
           format: date-time
+        isTeamCreator:
+          type: boolean
+        isTeamMember:
+          type: boolean
 
     LogoutResponse:
       type: object
