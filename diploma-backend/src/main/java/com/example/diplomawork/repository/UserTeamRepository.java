@@ -19,4 +19,6 @@ public interface UserTeamRepository extends JpaRepository<UserTeam, Long> {
     void deleteByTeamIdAndUserIdAndAcceptedTrue(Long teamId, Long userId);
 
     boolean existsByUserIdAndAcceptedTrue(Long userId);
+
+    boolean existsByUserIdAndTeamId(Long userId, Long teamId);
 }

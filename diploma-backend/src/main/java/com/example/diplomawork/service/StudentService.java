@@ -8,8 +8,10 @@ import com.example.diplomawork.repository.*;
 import com.example.models.*;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.MethodNotAllowedException;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
@@ -86,10 +88,15 @@ public class StudentService {
         return TeamInfoWithMembersDto.builder()
                 .team(teamMapper.entity2dto(team))
                 .members(userTeams.stream().map(userTeam -> userMapper.entity2dto(userTeam.getUser())).collect(Collectors.toList()))
+                .creatorId(team.getCreator().getId())
                 .build();
     }
 
+    @SneakyThrows
     public void createRequestToTeam(Long teamId) {
+        if (userTeamRepository.existsByUserIdAndTeamId(authService.getCurrentUser().getId(), teamId) || userTeamRepository.existsByUserIdAndAcceptedTrue(authService.getCurrentUser().getId())) {
+            throw new IllegalAccessException("Request already exists!");
+        }
         Team team = teamRepository.findById(teamId).orElseThrow(() -> new EntityNotFoundException("Team with id: " + teamId + " not found"));
         userTeamRepository.save(UserTeam.builder()
                 .user(authService.getCurrentUser())
@@ -121,6 +128,7 @@ public class StudentService {
         TeamTopic request = TeamTopic.builder()
                 .team(team)
                 .topic(topicRepository.findById(topicId).orElseThrow(() -> new EntityNotFoundException("Topic not found!")))
+                .approved(false)
                 .build();
         teamTopicRepository.save(request);
     }

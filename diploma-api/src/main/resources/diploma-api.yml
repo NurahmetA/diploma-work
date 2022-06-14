@@ -1664,6 +1664,9 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/UserDto'
+        creatorId:
+          type: integer
+          format: int64
 
     TeamJoinRequestInfoByBlocksDto:
       type: object

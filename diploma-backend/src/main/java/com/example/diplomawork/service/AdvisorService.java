@@ -3,10 +3,7 @@ package com.example.diplomawork.service;
 import com.example.diplomawork.mapper.TeamMapper;
 import com.example.diplomawork.mapper.TopicMapper;
 import com.example.diplomawork.mapper.UserMapper;
-import com.example.diplomawork.model.TeamTopic;
-import com.example.diplomawork.model.Topic;
-import com.example.diplomawork.model.User;
-import com.example.diplomawork.model.UserTeam;
+import com.example.diplomawork.model.*;
 import com.example.diplomawork.repository.*;
 import com.example.models.*;
 import lombok.RequiredArgsConstructor;
@@ -40,10 +37,14 @@ public class AdvisorService {
     private final TopicMapper topicMapper;
 
     public void acceptTopicRequests(Long topicId, Long requestId) {
+        User user = authService.getCurrentUser();
         TeamTopic teamTopic = teamTopicRepository.findById(requestId).orElseThrow(() -> new EntityNotFoundException("Team topic not found!"));
         teamTopic.setApproved(true);
         Topic topic = topicRepository.findById(topicId).orElseThrow(() -> new EntityNotFoundException("Topic not found!"));
         topic.setSelected(true);
+        Team team = teamTopic.getTeam();
+        team.setAdvisor(user);
+        team.setConfirmed(true);
         teamTopicRepository.deleteAllByTopicIdAndApprovedFalse(topicId);
     }
 
