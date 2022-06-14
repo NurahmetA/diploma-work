@@ -40,18 +40,31 @@ public class AdvisorService {
         User user = authService.getCurrentUser();
         TeamTopic teamTopic = teamTopicRepository.findById(requestId).orElseThrow(() -> new EntityNotFoundException("Team topic not found!"));
         teamTopic.setApproved(true);
-        Topic topic = topicRepository.findById(topicId).orElseThrow(() -> new EntityNotFoundException("Topic not found!"));
+        Topic topic = teamTopic.getTopic();
         topic.setSelected(true);
         Team team = teamTopic.getTeam();
+        topic.setTeam(team);
         team.setAdvisor(user);
+        team.setTopic(topic);
         team.setConfirmed(true);
+        teamTopicRepository.save(teamTopic);
+        topicRepository.save(topic);
+        teamRepository.save(team);
         teamTopicRepository.deleteAllByTopicIdAndApprovedFalse(topicId);
     }
 
-    public void createUpdateTopic(TopicCreateUpdateRequest request) {
-        Topic topic = topicRepository.findById(request.getId()).orElse(null);
+    public void updateTopic(TopicCreateUpdateRequest request) {
+        Topic topic = topicRepository.findById(request.getId()).orElseThrow(() -> new EntityNotFoundException("Topic not found"));
         topic.setName(request.getName());
         topicRepository.save(topic);
+    }
+
+    public void createTopic(TopicCreateUpdateRequest request) {
+        topicRepository.save(Topic.builder()
+                .name(request.getName())
+                .selected(false)
+                .creator(authService.getCurrentUser())
+                .build());
     }
 
     public void deleteTopic(Long topicId) {
@@ -72,13 +85,15 @@ public class AdvisorService {
         TopicInfoByBlocksDto.TopicInfoByBlocksDtoBuilder builder = TopicInfoByBlocksDto.builder();
         Topic topic = topicRepository.findById(topicId).orElseThrow(() -> new EntityNotFoundException("Topic with id: " + topicId + " not found"));
         if (topic.getSelected()) {
-            List<UserTeam> users = userTeamRepository.findAllByTeamIdAndAcceptedTrue(topic.getTeam().getId());
-            List<UserDto> members = users.stream().map(user -> userMapper.entity2dto(user.getUser())).collect(Collectors.toList());
-            TeamInfoWithMembersDto dto = TeamInfoWithMembersDto.builder()
-                    .team(teamMapper.entity2dto(topic.getTeam()))
-                    .members(members)
-                    .build();
-            builder.team(dto);
+            if (topic.getTeam() != null) {
+                List<UserTeam> users = userTeamRepository.findAllByTeamIdAndAcceptedTrue(topic.getTeam().getId());
+                List<UserDto> members = users.stream().map(user -> userMapper.entity2dto(user.getUser())).collect(Collectors.toList());
+                TeamInfoWithMembersDto dto = TeamInfoWithMembersDto.builder()
+                        .team(topic.getTeam() != null ? teamMapper.entity2dto(topic.getTeam()) : null)
+                        .members(members)
+                        .build();
+                builder.team(dto);
+            }
         }
         return builder.topic(topicMapper.entity2dto(topic))
                 .creator(userMapper.entity2dto(authService.getCurrentUser()))

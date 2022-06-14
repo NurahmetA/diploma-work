@@ -9,4 +9,8 @@ public interface TeamTopicRepository extends JpaRepository<TeamTopic, Long> {
     List<TeamTopic> findAllByTopicIdAndApprovedFalse(Long topicId);
 
     void deleteAllByTopicIdAndApprovedFalse(Long topicId);
+
+    boolean existsByTeamIdAndTopicId(Long teamId, Long topicId);
+
+    boolean existsByTeamIdAndApprovedTrue(Long teamId);
 }

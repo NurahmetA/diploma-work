@@ -42,8 +42,6 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
     private final RefreshTokenService refreshTokenService;
-    private final TeamRepository teamRepository;
-    private final UserTeamRepository userTeamRepository;
 
     public void signup(RegisterRequest request) {
         User user = User.builder()
@@ -53,7 +51,7 @@ public class AuthService {
                 .username(request.getUsername())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(roleRepository.findByName("ROLE_USER"))
+                .role(roleRepository.findByName("ROLE_STUDENT"))
                 .build();
         userRepository.save(user);
     }
@@ -100,8 +98,6 @@ public class AuthService {
         authenticationResponse.setUsername(request.getUsername());
         User user = userRepository.findByUsername(request.getUsername()).orElseThrow(() -> new EntityNotFoundException("User with username:" + request.getUsername() + "not found"));
         authenticationResponse.setRole(user.getRole().getName());
-        authenticationResponse.setIsTeamCreator(teamRepository.existsByCreatorId(user.getId()));
-        authenticationResponse.setIsTeamMember(userTeamRepository.existsByUserIdAndAcceptedTrue(user.getId()));
         return authenticationResponse;
     }
 

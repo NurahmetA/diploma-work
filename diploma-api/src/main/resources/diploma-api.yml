@@ -4,6 +4,20 @@ info:
   title: Diploma Service
   description: The Diploma Service
 paths:
+
+  /student/status:
+    get:
+      tags: [ Student ]
+      description: Get student's status depend on team
+      operationId: studentStatus
+      responses:
+        '200':
+          description: Status is OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentStatusDto'
+
   /student/teams:
     get:
       tags: [ Student ]
@@ -1488,10 +1502,6 @@ components:
         expiresAt:
           type: string
           format: date-time
-        isTeamCreator:
-          type: boolean
-        isTeamMember:
-          type: boolean
 
     LogoutResponse:
       type: object
@@ -1512,6 +1522,14 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/QuestionDto'
+
+    StudentStatusDto:
+      type: object
+      properties:
+        isTeamMember:
+          type: boolean
+        isTeamCreator:
+          type: boolean
 
     DefenceDto:
       type: object
