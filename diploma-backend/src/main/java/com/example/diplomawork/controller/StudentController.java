@@ -16,6 +16,18 @@ public class StudentController implements StudentApi {
 
     private final StudentService studentService;
 
+
+    @Override
+    public ResponseEntity<StudentStatusDto> studentStatus() {
+        return ResponseEntity.ok(studentService.getStudentStatus());
+    }
+
+    @Override
+    public ResponseEntity<Void> updateTeam(TeamCreateUpdateRequest request) {
+        studentService.createUpdateTeam(request);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @Override
     public ResponseEntity<Void> removeTeamMember(Long memberId) {
         studentService.removeTeamMember(memberId);

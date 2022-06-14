@@ -21,19 +21,25 @@ public class SecretaryController implements SecretaryApi {
     private final DocumentService documentService;
 
     @Override
+    public ResponseEntity<Void> deleteQuestion(Long questionId, Long defenceId) {
+        secretaryService.deleteQuestion(questionId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Override
     public ResponseEntity<List<UserDto>> getDefenceCommissions(Long defenceId) {
         return ResponseEntity.ok(secretaryService.getDefenceCommission(defenceId));
     }
 
     @Override
-    public ResponseEntity<Void> createQuestion(Long defenceId, QuestionCreateUpdateRequest request) {
-        secretaryService.createUpdateQuestion(defenceId, request);
+    public ResponseEntity<Void> createQuestion(Long defenceId, QuestionCreateRequest request) {
+        secretaryService.createQuestion(defenceId, request);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @Override
-    public ResponseEntity<Void> updateQuestion(Long defenceId, QuestionCreateUpdateRequest request) {
-        secretaryService.createUpdateQuestion(defenceId, request);
+    public ResponseEntity<Void> updateQuestion(Long defenceId, QuestionUpdateRequest request) {
+        secretaryService.updateQuestion(request);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

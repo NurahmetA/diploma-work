@@ -29,7 +29,7 @@ public class AdvisorController implements AdvisorApi {
 
     @Override
     public ResponseEntity<Void> createTopic(TopicCreateUpdateRequest request) {
-        advisorService.createUpdateTopic(request);
+        advisorService.createTopic(request);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -61,7 +61,7 @@ public class AdvisorController implements AdvisorApi {
 
     @Override
     public ResponseEntity<Void> updateTopic(TopicCreateUpdateRequest request) {
-        advisorService.createUpdateTopic(request);
+        advisorService.updateTopic(request);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

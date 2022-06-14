@@ -9,6 +9,7 @@ import com.example.models.*;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.MethodNotAllowedException;
@@ -51,11 +52,13 @@ public class StudentService {
                 .topic(request.getTopicId() != null ? topicRepository.findById(request.getTopicId()).orElseThrow(() -> new EntityNotFoundException("Not found")) : null)
                 .build();
         teamRepository.saveAndFlush(team);
-        userTeamRepository.save(UserTeam.builder()
-                .team(team)
-                .user(currentUser)
-                .accepted(true)
-                .build());
+        if (request.getTeamId() == null) {
+            userTeamRepository.save(UserTeam.builder()
+                    .team(team)
+                    .user(currentUser)
+                    .accepted(true)
+                    .build());
+        }
     }
 
     public List<UserTeamRequestDto> getTeamJoinRequests() {
@@ -122,6 +125,9 @@ public class StudentService {
     public void createRequestToTopic(Long topicId) {
         User currentUser = authService.getCurrentUser();
         Team team = teamRepository.findByCreatorId(authService.getCurrentUser().getId()).orElseThrow(() -> new EntityNotFoundException("Team with creator id: " + currentUser.getId() + " not found"));
+        if (teamTopicRepository.existsByTeamIdAndTopicId(team.getId(), topicId) || teamTopicRepository.existsByTeamIdAndApprovedTrue(team.getId())) {
+            throw new IllegalAccessException("Request already created!");
+        }
         if (team == null) {
             throw new IllegalAccessException("Action is not allowed!");
         }
@@ -141,9 +147,21 @@ public class StudentService {
                 .build()).collect(Collectors.toList());
     }
 
+    @SneakyThrows
     public void removeTeamMember(Long memberId) {
         User currentUser = authService.getCurrentUser();
+        if (currentUser.getId() == memberId) {
+            throw new IllegalAccessException("Action is not allowed!");
+        }
         Team team = teamRepository.findByCreatorId(currentUser.getId()).orElseThrow(() -> new EntityNotFoundException("Team not found"));
         userTeamRepository.deleteByTeamIdAndUserIdAndAcceptedTrue(team.getId(), memberId);
+    }
+
+    public StudentStatusDto getStudentStatus() {
+        User student = authService.getCurrentUser();
+        return StudentStatusDto.builder()
+                .isTeamCreator(teamRepository.existsByCreatorId(student.getId()))
+                .isTeamMember(userTeamRepository.existsByUserIdAndAcceptedTrue(student.getId()))
+                .build();
     }
 }

@@ -44,7 +44,7 @@ public class SecretaryService {
 
     private final DefenceMapper defenceMapper;
 
-    public void createUpdateQuestion(Long defenceId, QuestionCreateUpdateRequest request) {
+    public void createQuestion(Long defenceId, QuestionCreateRequest request) {
         List<Long> studentIds = request.getStudentIds();
         studentIds.stream().map(studentId -> Question.builder()
                 .questioner(userRepository.findById(request.getQuestionerId()).orElseThrow(() -> new EntityNotFoundException("User with id: " + request.getQuestionerId() + " not found")))
@@ -52,6 +52,12 @@ public class SecretaryService {
                 .defence(defenceRepository.findById(defenceId).orElseThrow(() -> new EntityNotFoundException("Defence with id: " + defenceId + " not found")))
                 .responder(userRepository.findById(studentId).orElseThrow(() -> new EntityNotFoundException("User with id: " + studentId + " not found")))
                 .build()).forEach(questionRepository::save);
+    }
+
+    public void updateQuestion(QuestionUpdateRequest request) {
+        Question question = questionRepository.findById(request.getId()).orElseThrow(() -> new EntityNotFoundException("Question not found!"));
+        question.setDescription(request.getDescription());
+        questionRepository.save(question);
     }
 
     public DefenceInfoByBlocksDto getDefenceInfo(Long defenceId) {
@@ -128,5 +134,9 @@ public class SecretaryService {
     public List<UserDto> getDefenceCommission(Long defenceId) {
         List<DefenceCommission> defenceCommissions = defenceCommissionRepository.findDefenceCommissionsByDefenceId(defenceId);
         return defenceCommissions.stream().map(defenceCommission -> userMapper.entity2dto(defenceCommission.getCommission())).collect(Collectors.toList());
+    }
+
+    public void deleteQuestion(Long questionId) {
+        questionRepository.deleteById(questionId);
     }
 }

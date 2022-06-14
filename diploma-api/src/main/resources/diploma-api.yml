@@ -4,6 +4,20 @@ info:
   title: Diploma Service
   description: The Diploma Service
 paths:
+
+  /student/status:
+    get:
+      tags: [ Student ]
+      description: Get student's status depend on team
+      operationId: studentStatus
+      responses:
+        '200':
+          description: Status is OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentStatusDto'
+
   /student/teams:
     get:
       tags: [ Student ]
@@ -1105,7 +1119,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/QuestionCreateUpdateRequest'
+              $ref: '#/components/schemas/QuestionCreateRequest'
       responses:
         201:
           description: SUCCESS
@@ -1128,10 +1142,34 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/QuestionCreateUpdateRequest'
+              $ref: '#/components/schemas/QuestionUpdateRequest'
       responses:
         200:
           description: SUCCESS
+
+  /secretary/{defenceId}/question/{questionId}:
+    delete:
+      tags: [ Secretary ]
+      description: Deletes question
+      operationId: deleteQuestion
+      parameters:
+        - in: path
+          name: questionId
+          schema:
+            type: integer
+            format: int64
+          description: ID of question
+          required: true
+        - in: path
+          name: defenceId
+          schema:
+            type: integer
+            format: int64
+          description: ID of defence
+          required: true
+      responses:
+        '200':
+          description: Status is OK
 
   /secretary/{defenceId}/grades:
     get:
@@ -1488,10 +1526,6 @@ components:
         expiresAt:
           type: string
           format: date-time
-        isTeamCreator:
-          type: boolean
-        isTeamMember:
-          type: boolean
 
     LogoutResponse:
       type: object
@@ -1512,6 +1546,14 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/QuestionDto'
+
+    StudentStatusDto:
+      type: object
+      properties:
+        isTeamMember:
+          type: boolean
+        isTeamCreator:
+          type: boolean
 
     DefenceDto:
       type: object
@@ -1550,7 +1592,7 @@ components:
         name:
           type: string
 
-    QuestionCreateUpdateRequest:
+    QuestionCreateRequest:
       type: object
       properties:
         description:
@@ -1563,6 +1605,15 @@ components:
         questionerId:
           type: integer
           format: int64
+
+    QuestionUpdateRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        description:
+          type: string
 
     CommissionQuestionUpdateRequest:
       type: object
