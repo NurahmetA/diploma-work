@@ -28,6 +28,8 @@ public class AdvisorService {
 
     private final UserTeamRepository userTeamRepository;
 
+    private final ReviewerRepository reviewerRepository;
+
     private final AuthService authService;
 
     private final TeamMapper teamMapper;
@@ -47,6 +49,7 @@ public class AdvisorService {
         team.setAdvisor(user);
         team.setTopic(topic);
         team.setConfirmed(true);
+        team.setReviewer(reviewerRepository.findById(1L).get());
         teamTopicRepository.save(teamTopic);
         topicRepository.save(topic);
         teamRepository.save(team);
