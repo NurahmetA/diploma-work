@@ -194,7 +194,7 @@ public class DocumentUtil {
 
         Paragraph commissionList = new Paragraph("Члены аттестационной комиссии: ", font);
         List commissionMembers = new List(List.ORDERED);
-        dto.getCommissions().stream().filter(userDto -> !userDto.getLastName().equals("Рахимжанов") && !userDto.getLastName().equals("Аябекова")).map(userDto -> new ListItem(userDto.getLastName() + " " + userDto.getFirstName(), italic)).forEach(commissionMembers::add);
+        dto.getCommissions().stream().map(userDto -> new ListItem(userDto.getLastName() + " " + userDto.getFirstName(), italic)).forEach(commissionMembers::add);
         commissionMembers.add(new ListItem("Аябекова Д.", italic));
 
         Chunk studentText1 = new Chunk("Обучающийся ", font);
